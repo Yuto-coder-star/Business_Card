@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import { useChat } from "@ai-sdk/react";
+import { useChat, type UIMessage } from "@ai-sdk/react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Loader2,
@@ -53,6 +53,28 @@ function getActNumber(scene?: Scene | null) {
   if (!match) return undefined;
   const num = Number.parseInt(match[1] ?? "", 10);
   return Number.isNaN(num) ? undefined : num;
+}
+
+function getMessageText(message: UIMessage): string {
+  return message.parts
+    .map((part) => {
+      if ("text" in part && typeof part.text === "string") {
+        return part.text;
+      }
+      if ("data" in part && part.data !== undefined) {
+        const data = part.data;
+        if (typeof data === "string") {
+          return data;
+        }
+        try {
+          return JSON.stringify(data);
+        } catch {
+          return "";
+        }
+      }
+      return "";
+    })
+    .join("");
 }
 
 function extractScene(content: string): Scene | null {
@@ -360,7 +382,7 @@ export default function Home() {
   const parsedScenes = useMemo(() =>
     messages
       .filter((message) => message.role === "assistant")
-      .map((message) => extractScene(message.content))
+      .map((message) => extractScene(getMessageText(message)))
       .filter((scene): scene is Scene => Boolean(scene)),
   [messages]);
 
@@ -387,7 +409,7 @@ export default function Home() {
   useEffect(() => {
     const lastMessage = [...messages].reverse().find((msg) => msg.role === "assistant");
     if (!lastMessage) return;
-    const scene = extractScene(lastMessage.content);
+    const scene = extractScene(getMessageText(lastMessage));
     if (!scene) return;
 
     const hasEnding =
@@ -482,7 +504,8 @@ export default function Home() {
             <AnimatePresence initial={false}>
               {messages.map((message, index) => {
                 const isUser = message.role === "user";
-                const scene = !isUser ? extractScene(message.content) : null;
+                const messageText = getMessageText(message);
+                const scene = !isUser ? extractScene(messageText) : null;
                 const isLatestAssistant =
                   !isUser &&
                   (latestAssistantId
@@ -500,12 +523,12 @@ export default function Home() {
                   >
                     {isUser ? (
                       <div className="max-w-[80%] rounded-2xl bg-white/15 px-4 py-3 text-sm text-white">
-                        {message.content}
+                        {messageText}
                       </div>
                     ) : (
                       <SceneView
                         scene={scene}
-                        raw={message.content}
+                        raw={messageText}
                         accent={accent}
                         isStreaming={isLoading && isLatestAssistant}
                       />
