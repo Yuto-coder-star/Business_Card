@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -338,16 +338,9 @@ function EndingOverlay({
 }
 
 export default function Home() {
-  const {
-    messages,
-    input,
-    handleSubmit,
-    isLoading,
-    sendMessage,
-    setInput,
-    setMessages,
-  } = useChat({ api: "/api/chat" });
-  const safeInput = input ?? "";
+  const { messages, status, sendMessage, setMessages } = useChat();
+  const [inputValue, setInputValue] = useState("");
+  const isLoading = status === "submitted" || status === "streaming";
   const [hasStarted, setHasStarted] = useState(false);
   const [endingScene, setEndingScene] = useState<Scene | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -412,22 +405,25 @@ export default function Home() {
     ? (latestScene?.options as string[])
     : [];
 
-    const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!safeInput.trim()) return;
-    await handleSubmit(event);
+    if (isLoading) return;
+    const trimmed = inputValue.trim();
+    if (!trimmed) return;
+    await sendMessage({ text: trimmed });
+    setInputValue("");
   };
 
-    const handleOptionSelect = (option: string) => {
-      if (isLoading) return;
-      setInput("");
-      sendMessage({ text: option });
+  const handleOptionSelect = (option: string) => {
+    if (isLoading) return;
+    setInputValue("");
+    void sendMessage({ text: option });
   };
 
-    const handleRestart = () => {
+  const handleRestart = () => {
     setEndingScene(null);
     setMessages([]);
-    setInput("");
+    setInputValue("");
     setHasStarted(false);
   };
 
@@ -549,15 +545,15 @@ export default function Home() {
           className="glass-panel flex items-center gap-3 rounded-3xl border-white/10 p-3"
           style={{ borderColor: `${accent}33` }}
         >
-              <input
-                value={safeInput}
-                onChange={(event: ChangeEvent<HTMLInputElement>) => setInput(event.target.value)}
-              placeholder="あなたの推理や質問を入力…"
-              className="flex-1 bg-transparent text-sm text-white placeholder:text-white/40 focus:outline-none"
-            />
-            <button
-              type="submit"
-              disabled={isLoading || !safeInput.trim()}
+          <input
+            value={inputValue}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => setInputValue(event.target.value)}
+            placeholder="あなたの推理や質問を入力…"
+            className="flex-1 bg-transparent text-sm text-white placeholder:text-white/40 focus:outline-none"
+          />
+          <button
+            type="submit"
+            disabled={isLoading || !inputValue.trim()}
             className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-50"
             style={{ color: accent }}
           >
