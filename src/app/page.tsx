@@ -338,7 +338,7 @@ function EndingOverlay({
 }
 
 export default function Home() {
-  const { messages, status, sendMessage, setMessages } = useChat({ api: "/api/chat" });
+  const { messages, status, sendMessage, setMessages } = useChat();
   const [inputValue, setInputValue] = useState("");
   const isLoading = status === "submitted" || status === "streaming";
   const [hasStarted, setHasStarted] = useState(false);
