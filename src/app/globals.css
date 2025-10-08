@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --background: #050b14;
+    --foreground: #f4f9ff;
+    --muted: rgba(255, 255, 255, 0.55);
+  }
+
+  body {
+    @apply min-h-screen bg-[radial-gradient(circle_at_top,_rgba(70,225,194,0.18),_transparent_55%),_linear-gradient(135deg,_#030712,_#0b1622_45%,_#162635_100%)] text-slate-100 antialiased;
+    font-family: var(--font-sans);
+  }
+
+  ::selection {
+    background: rgba(70, 225, 194, 0.3);
+    color: #ffffff;
+  }
+
+  * {
+    @apply border-white/10;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl shadow-black/30;
+  }
+
+}
