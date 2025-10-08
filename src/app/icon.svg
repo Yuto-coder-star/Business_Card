@@ -1,0 +1,18 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="128" fill="#0B1622" />
+  <g filter="url(#glow)">
+    <path
+      d="M160 352L256 144L352 352H312L256 230L200 352H160Z"
+      fill="#46E1C2"
+    />
+  </g>
+  <defs>
+    <filter id="glow" x="120" y="104" width="272" height="288" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="18" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+</svg>
