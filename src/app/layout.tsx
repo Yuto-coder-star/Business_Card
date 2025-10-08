@@ -18,6 +18,13 @@ export const metadata: Metadata = {
   title: "会計探偵：まるっとケースファイル",
   description:
     "鶴田悠斗と共に数字の謎を追う、3分で楽しめるシネマティックなインタラクティブミステリー。",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon.svg", rel: "alternate icon" },
+    ],
+    shortcut: "/icon.svg",
+  },
   openGraph: {
     title: "会計探偵：まるっとケースファイル",
     description:
