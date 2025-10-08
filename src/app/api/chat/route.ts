@@ -84,5 +84,5 @@ export async function POST(req: NextRequest) {
     temperature: 0.8,
   });
 
-  return result.toTextStreamResponse();
+  return result.toUIMessageStreamResponse();
 }
