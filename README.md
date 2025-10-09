@@ -48,6 +48,19 @@
 
 本プロジェクトはVercelでのデプロイを想定しています。Edge RuntimeでOpenAIストリーミングを行うため、Vercelの環境変数に `OPENAI_API_KEY` を設定してください。
 
+### Vercelで404が表示される場合のチェックリスト
+
+ローカルの開発サーバー(`npm run dev`)および本番ビルド(`npm run build` → `npm run start`)では、トップページに正常にアクセスできることを確認しています。そのため、Vercelで404が表示される場合は、以下の設定を見直してください。
+
+1. **プロジェクトのルートディレクトリ**  
+   Gitリポジトリ直下に本アプリがある場合は、Vercelの Project Settings → General → *Root Directory* を `Business_Card` に設定してください（初期値のままの場合、アプリのあるディレクトリを見失い404になります）。
+2. **Build & Output Settings**  
+   Frameworkは *Next.js*、Build Commandは `npm run build`、Output Directoryは `.next` を指定します。変更した場合は保存して再デプロイしてください。
+3. **環境変数**  
+   `OPENAI_API_KEY` を *Environment Variables* に登録し、Production環境に反映されているか確認します。未設定でもトップページ自体は表示されますが、API呼び出しが失敗して画面が固まる原因となります。
+
+設定を更新したら、Vercelのダッシュボードから再デプロイを実行すると、トップページが正しく表示されるようになります。
+
 ## ライセンス
 
 このリポジトリはプロジェクト要件に合わせて構築されたサンプルであり、特定のライセンスは付与していません。ご自身の利用規約に沿ってご利用ください。
